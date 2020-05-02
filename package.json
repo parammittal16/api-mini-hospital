@@ -4,6 +4,7 @@
   "description": "node app ",
   "main": "app.js",
   "scripts": {
+    "postinstall": "pip3 install keras",
     "start": "node app.js"
   },
   "repository": {
