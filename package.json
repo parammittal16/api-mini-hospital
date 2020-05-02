@@ -4,17 +4,19 @@
   "description": "node app ",
   "main": "app.js",
   "scripts": {
-    "start": "pip3 install keras && node app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/parammittal16/mini-hospital-api"
   },
   "dependencies": {
+
     "body-parser": "^1.19.0",
     "express": "~4.16.1",
     "multer": "^1.4.2",
-    "python-shell": "^1.0.8"
+    "python-shell": "^1.0.8",
+    "nodemon": "^2.0.2"
   },
   "dev-dependencies": {},
   "devDependencies": {
