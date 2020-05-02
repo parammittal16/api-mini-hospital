@@ -1,2 +1,2 @@
-pipinstall: pip3 install keras
+pipinstall: pip3 install -r requirements.txt
 web: npm start
