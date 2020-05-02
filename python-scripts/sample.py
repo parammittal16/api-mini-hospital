@@ -1,4 +1,3 @@
-from keras.models import load_model,Model
 import sys
 import random
 import math
