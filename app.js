@@ -18,13 +18,15 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
 const extendTimeoutMiddleware = (req, res, next) => {
-    const space = ' ';
+    const space = 'P';
     let isFinished = false;
     let isDataSent = false;
 
     // Only extend the timeout for API requests
     if (!req.url.includes('/api')) {
+        console.log('returning ...');
         next();
         return;
     }
@@ -51,11 +53,13 @@ const extendTimeoutMiddleware = (req, res, next) => {
 
     const waitAndSend = () => {
         setTimeout(() => {
+            console.log('was: 5 sec')
             // If the response hasn't finished and hasn't sent any data back....
             if (!isFinished && !isDataSent) {
                 // Need to write the status code/headers if they haven't been sent yet.
                 if (!res.headersSent) {
-                    res.writeHead(202);
+                    console.log('yoyo')
+                    res.status(202);
                 }
 
                 res.write(space);
@@ -63,16 +67,15 @@ const extendTimeoutMiddleware = (req, res, next) => {
                 // Wait another 15 seconds
                 waitAndSend();
             }
-        }, 15000);
+        }, 5000);
     };
 
     waitAndSend();
     next();
 };
-
 app.use(extendTimeoutMiddleware);
 
-app.post('/brain', (req, res) => {
+app.post('/api/brain', (req, res) => {
     const brain_path = __dirname + '/python-scripts/brain-tumor-detection';
     const upload = multer({ dest: brain_path + '/data/' }).single('photo');
     upload(req, res, function (err) {
@@ -93,13 +96,17 @@ app.post('/brain', (req, res) => {
                 console.log(err);
                 res.send(err);
             }
-            console.log(data);
-            res.send(data)
+            // console.log(data.data);
+            // console.log(JSON.stringify(data));
+            // console.log(typeof JSON.stringify(data));
+            res.write(JSON.stringify(data));
+            res.end();
+            // res.send(data)
         });
     });
 });
 
-app.post('/bone', (req, res) => {
+app.post('/api/bone', (req, res) => {
     const bone_path = __dirname + '/python-scripts/bone-fracture-detection';
     const upload = multer({ dest: bone_path + '/data/' }).single('photo');
     upload(req, res, function (err) {
@@ -120,13 +127,18 @@ app.post('/bone', (req, res) => {
                 console.log(err);
                 res.send(err);
             }
-            console.log(data);
-            res.send(data)
+            // console.log(data);
+            // console.log(JSON.stringify(data));
+            // console.log(typeof JSON.stringify(data));
+            res.write(JSON.stringify(data));
+            res.end();
+            // res.send(data);
         });
     });
 });
 
-app.get('/', (req, res) => res.send('Mini Hospital API'));
+app.get('/', (req, res) => res.send('Mini Hospital API Route is /'));
+app.get('/api', (req, res) => res.send('Mini Hospital API Route is /api'));
 
 // app.post('/post', function (req, res) {
 //   upload(req, res, function (err) {
