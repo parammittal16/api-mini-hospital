@@ -3,12 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PythonShell } = require('python-shell');
 const multer = require('multer');
-// const DelayedResponse = require('http-delayed-response');
+
+const extendTimeOutFunction = require('./middlewares/extendTimeOut');
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-
 
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -18,62 +17,7 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-
-const extendTimeoutMiddleware = (req, res, next) => {
-    const space = 'P';
-    let isFinished = false;
-    let isDataSent = false;
-
-    // Only extend the timeout for API requests
-    if (!req.url.includes('/api')) {
-        console.log('returning ...');
-        next();
-        return;
-    }
-
-    res.once('finish', () => {
-        isFinished = true;
-    });
-
-    res.once('end', () => {
-        isFinished = true;
-    });
-
-    res.once('close', () => {
-        isFinished = true;
-    });
-
-    res.on('data', (data) => {
-        // Look for something other than our blank space to indicate that real
-        // data is now being sent back to the client.
-        if (data !== space) {
-            isDataSent = true;
-        }
-    });
-
-    const waitAndSend = () => {
-        setTimeout(() => {
-            console.log('was: 5 sec')
-            // If the response hasn't finished and hasn't sent any data back....
-            if (!isFinished && !isDataSent) {
-                // Need to write the status code/headers if they haven't been sent yet.
-                if (!res.headersSent) {
-                    console.log('yoyo')
-                    res.status(202);
-                }
-
-                res.write(space);
-
-                // Wait another 15 seconds
-                waitAndSend();
-            }
-        }, 5000);
-    };
-
-    waitAndSend();
-    next();
-};
-app.use(extendTimeoutMiddleware);
+app.use(extendTimeOutFunction);
 
 app.post('/api/brain', (req, res) => {
     const brain_path = __dirname + '/python-scripts/brain-tumor-detection';
@@ -96,12 +40,9 @@ app.post('/api/brain', (req, res) => {
                 console.log(err);
                 res.send(err);
             }
-            // console.log(data.data);
-            // console.log(JSON.stringify(data));
-            // console.log(typeof JSON.stringify(data));
+            console.log(JSON.stringify(data));
             res.write(JSON.stringify(data));
             res.end();
-            // res.send(data)
         });
     });
 });
@@ -127,12 +68,9 @@ app.post('/api/bone', (req, res) => {
                 console.log(err);
                 res.send(err);
             }
-            // console.log(data);
-            // console.log(JSON.stringify(data));
-            // console.log(typeof JSON.stringify(data));
+            console.log(JSON.stringify(data));
             res.write(JSON.stringify(data));
             res.end();
-            // res.send(data);
         });
     });
 });
@@ -140,15 +78,6 @@ app.post('/api/bone', (req, res) => {
 app.get('/', (req, res) => res.send('Mini Hospital API Route is /'));
 app.get('/api', (req, res) => res.send('Mini Hospital API Route is /api'));
 
-// app.post('/post', function (req, res) {
-//   upload(req, res, function (err) {
-//     if (err) {
-//       console.log(err);
-//       return res.status(422).send("an Error occured")
-//     }
-//     return res.send("Upload Completed for " + req.file.path);
-//   });
-// })
 app.get('/sample', (req, res) => {
     var options = {
         args:
@@ -170,5 +99,3 @@ app.get('/sample', (req, res) => {
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 // python3 predict.py '/home/ubuntu18/Documents/My/00 PROJECTS/4rth YEAR PROJECT/mini-hospital-api/python-scripts/bone-fracture-detection/bone.png'
-
-
