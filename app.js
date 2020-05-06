@@ -75,6 +75,29 @@ app.post('/api/bone', (req, res) => {
     });
 });
 
+app.post('/api/disease', (req, res) => {
+    const disease_path = __dirname + '/python-scripts/disease-detection';
+    const symps = req.body.symptopms;
+    console.log(symps);
+    var options = {
+        args:
+            [
+                disease_path + '/disease_dt_model.sav',
+                ...symps
+            ]
+    }
+    console.log("------>", options);
+    PythonShell.run(disease_path + '/predict.py', options, function (err, data) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        console.log(JSON.stringify(data));
+        res.write(JSON.stringify(data));
+        res.end();
+    });
+});
+
 app.get('/', (req, res) => res.send('Mini Hospital API Route is /'));
 app.get('/api', (req, res) => res.send('Mini Hospital API Route is /api'));
 
@@ -95,6 +118,10 @@ app.get('/sample', (req, res) => {
         res.send(data.toString())
     });
 });
+app.post('/api/test', (req, res) => {
+    console.log(req.body);
+    res.send(req.body.a);
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
