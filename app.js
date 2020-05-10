@@ -101,9 +101,9 @@ app.post('/api/disease', (req, res) => {
     });
 });
 
-app.get('/api/nearby-hospitals', (req, res) => {
+app.post('/api/nearby-hospitals', (req, res) => {
     console.log(req.body);
-    nearbyHospitals.randeats(req, res);
+    nearbyHospitals.nbHospitals(req, res);
 });
 
 

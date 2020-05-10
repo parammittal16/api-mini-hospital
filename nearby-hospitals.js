@@ -1,5 +1,5 @@
 /*eslint-env es6*/
-exports.randeats = function (req, res) {
+exports.nbHospitals = function (req, res) {
 
     var key = req.body.mapsKey || 'AIzaSyDDkQTBSz8E4vr8wRYu88Tmdb0jdX2B_8E';
     var location = encodeURIComponent(`${req.body.latitude},${req.body.longitude}`);
