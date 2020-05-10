@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PythonShell } = require('python-shell');
 const multer = require('multer');
+let nearbyHospitals = require('./nearby-hospitals');
+
 
 const extendTimeOutFunction = require('./middlewares/extendTimeOut');
 
@@ -77,6 +79,7 @@ app.post('/api/bone', (req, res) => {
 
 app.post('/api/disease', (req, res) => {
     const disease_path = __dirname + '/python-scripts/disease-detection';
+    console.log(req.body.symptopms);
     const symps = req.body.symptopms;
     console.log(symps);
     var options = {
@@ -98,6 +101,14 @@ app.post('/api/disease', (req, res) => {
     });
 });
 
+app.get('/api/nearby-hospitals', (req, res) => {
+    console.log(req.body);
+    nearbyHospitals.randeats(req, res);
+});
+
+
+// testing endpoints
+
 app.get('/', (req, res) => res.send('Mini Hospital API Route is /'));
 app.get('/api', (req, res) => res.send('Mini Hospital API Route is /api'));
 
@@ -118,11 +129,5 @@ app.get('/sample', (req, res) => {
         res.send(data.toString())
     });
 });
-app.post('/api/test', (req, res) => {
-    console.log(req.body);
-    res.send(req.body.a);
-})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
-// python3 predict.py '/home/ubuntu18/Documents/My/00 PROJECTS/4rth YEAR PROJECT/mini-hospital-api/python-scripts/bone-fracture-detection/bone.png'
