@@ -1,7 +1,7 @@
 /*eslint-env es6*/
 exports.nbHospitals = function (req, res) {
 
-    var key = req.body.mapsKey || 'AIzaSyDDkQTBSz8E4vr8wRYu88Tmdb0jdX2B_8E';
+    var key = req.body.mapsKey || "AIzaSyAMVgdU4VeJ9zjOYjAPvfRBEj1k95j-axA";
     var location = encodeURIComponent(`${req.body.latitude},${req.body.longitude}`);
     var sensor = false;
     var types = "hospital";
